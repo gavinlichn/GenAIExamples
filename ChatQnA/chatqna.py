@@ -20,7 +20,6 @@ from fastapi import Request
 from fastapi.responses import StreamingResponse
 from langchain_core.prompts import PromptTemplate
 
-
 class ChatTemplate:
     @staticmethod
     def generate_rag_prompt(question, documents):
@@ -346,15 +345,15 @@ class ChatQnAService:
             chat_template=chat_request.chat_template if chat_request.chat_template else None,
         )
         retriever_parameters = RetrieverParms(
-            search_type=chat_request.search_type if chat_request.search_type else "similarity",
+            search_type="similarity_score_threshold",
             k=chat_request.k if chat_request.k else 4,
             distance_threshold=chat_request.distance_threshold if chat_request.distance_threshold else None,
             fetch_k=chat_request.fetch_k if chat_request.fetch_k else 20,
             lambda_mult=chat_request.lambda_mult if chat_request.lambda_mult else 0.5,
-            score_threshold=chat_request.score_threshold if chat_request.score_threshold else 0.2,
+            score_threshold=0.6,
         )
         reranker_parameters = RerankerParms(
-            top_n=chat_request.top_n if chat_request.top_n else 1,
+            top_n=4,
         )
         result_dict, runtime_graph = await self.megaservice.schedule(
             initial_inputs={"text": prompt},
